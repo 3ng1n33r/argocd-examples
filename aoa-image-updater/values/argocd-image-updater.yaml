@@ -1,0 +1,8 @@
+config:
+  registries:
+    - name: Docker Hub
+      prefix: docker.io
+      api_url: https://index.docker.io
+      credentials: pullsecret:argocd/regcred
+      defaultns: library
+      default: true

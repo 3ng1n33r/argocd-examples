@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: c8h11no2/flask-app
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/gitlab-token
+    argocd-image-updater.argoproj.io/git-branch: main
+  name: flask-app
+  # Обратите внимание на namespace – он должен быть argocd
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    # А вот тут уже неймспейс, куда будет устанавливаться сам чарт
+    namespace: flask-app
+    server: {{ .Values.spec.destination.server }}
+  project: default
+  source:
+    # Указываем путь до чарта
+    path: charts/flask-app
+    repoURL: {{ .Values.spec.source.repoURL }}
+    targetRevision: {{ .Values.spec.source.targetRevision }}
+    helm:
+      valueFiles:
+        - ../../values/flask-app.yaml
+  syncPolicy:
+    automated: {}
